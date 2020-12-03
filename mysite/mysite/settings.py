@@ -25,7 +25,7 @@ SECRET_KEY = ')eyb4l7!loq$6fk91a8ow4^@r#x6)o%*_9e_+kx-_!6o1#t)8^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -122,4 +122,23 @@ STATIC_URL = '/static/'
 
 
 # Email Backend
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+from django.core.exceptions import ImproperlyConfigured
+import json
+
+with open(Path(__file__).resolve().parent / 'secrets.json', 'r') as file:
+    secrets = json.loads(file.read())
+
+def get_secret(secret):
+    try:
+        return secrets[secret]
+    except ImproperlyConfigured:
+        msg = f'Not proper configured {secret}'
+        raise msg
+
+# Email Gmail
+EMAIL_HOST = get_secret('EMAIL_HOST')
+EMAIL_HOST_USER = get_secret('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = get_secret('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = get_secret('EMAIL_PORT')
+EMAIL_USE_TLS = get_secret('EMAIL_USE_TLS')
