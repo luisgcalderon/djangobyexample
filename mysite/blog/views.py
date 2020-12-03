@@ -3,6 +3,9 @@ from django.core.paginator import Paginator, EmptyPage,\
     PageNotAnInteger
 from django.views.generic import ListView
 from django.core.mail import send_mail
+
+from mysite.settings import EMAIL_HOST_USER
+
 from .models import Post
 from .forms import EmailPostForm
 
@@ -61,7 +64,7 @@ def post_share(request, post_id):
                       f"{post.title}"
             message = f"Read {post.title} at {post_url}\n\n" \
                       f"{cd['name']}\'s comments: {cd['comments']}"
-            send_mail(subject, message, 'admin@myblog.com', [cd['to']])
+            send_mail(subject, message, EMAIL_HOST_USER, [cd['to']])
             sent = True
             # ... send email
     else:
